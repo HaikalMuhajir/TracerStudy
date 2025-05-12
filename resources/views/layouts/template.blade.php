@@ -5,7 +5,8 @@
 @include('layouts.header')
 {{-- End Header --}}
 
-<body class="g-sidenav-show bg-gray-200 dark-version">
+<body class="g-sidenav-show bg-gray-200">
+    <div class="min-height-300 bg-dark position-absolute w-100"></div>
     {{-- Sidebar --}}
     @include('layouts.sidebar')
     {{-- End Sidebar --}}
