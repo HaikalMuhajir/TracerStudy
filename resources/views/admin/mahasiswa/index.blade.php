@@ -1,7 +1,8 @@
 @extends('layouts.template')
 
 @section('content')
-    <h1 class="judul-halaman">Data Mahasiswa</h1>
-    <p class="subjudul-halaman">Ini adalah halaman yang menampilkan data mahasiswa.</p>
-    {{-- Anda bisa menambahkan tabel atau daftar data mahasiswa di sini --}}
+    <div class="text-white text-center">
+        <h1 class="judul-halaman text-white">Data Mahasiswa</h1>
+        <p class="subjudul-halaman">Ini adalah halaman data mahasiswa.</p>
+    </div>
 @endsection
