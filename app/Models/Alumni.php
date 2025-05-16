@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Alumni extends Model
+{
+    use HasFactory;
+
+    protected $table = 'alumni';
+
+    protected $primaryKey = 'alumni_id';
+
+    protected $fillable = [
+        'user_id', 'prodi_id', 'nim', 'no_hp', 'jenis_instansi', 'nama_instansi', 'skala_instansi',
+        'lokasi_instansi', 'kategori_profesi', 'profesi', 'tanggal_lulus', 'tahun_lulus', 'tanggal_pertama_kerja',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function programStudi()
+    {
+        return $this->belongsTo(ProgramStudi::class, 'prodi_id', 'prodi_id');
+    }
+
+    public function performa()
+    {
+        return $this->hasMany(Performa::class, 'alumni_id', 'alumni_id');
+    }
+
+    public function penggunas()
+    {
+        return $this->hasMany(Pengguna::class, 'alumni_id', 'alumni_id');
+    }
+}
