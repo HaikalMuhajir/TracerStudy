@@ -54,7 +54,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Modal for Detail -->
   <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -78,7 +78,7 @@
     document.querySelectorAll('.status-toggle').forEach(button => {
       button.addEventListener('click', function() {
         const currentStatus = this.getAttribute('data-status');
-        
+
         if (currentStatus === 'sudah-mengisi') {
           this.classList.remove('btn-success');
           this.classList.add('btn-secondary');
@@ -90,7 +90,7 @@
           this.textContent = 'Sudah Mengisi';
           this.setAttribute('data-status', 'sudah-mengisi');
         }
-        
+
         // You can add additional logic here to update status in the backend if needed
       });
     });
@@ -100,7 +100,7 @@
       fetch(`/mahasiswa/detail/${studentId}`)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('detailContent').innerHTML = ` 
+          document.getElementById('detailContent').innerHTML = `
             <p><strong>Nama:</strong> ${data.nama}</p>
             <p><strong>NIM:</strong> ${data.nim}</p>
             <p><strong>Prodi:</strong> ${data.prodi}</p>
