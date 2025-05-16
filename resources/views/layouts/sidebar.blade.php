@@ -4,8 +4,7 @@
         <div class="sidenav-header text-center">
             <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
                 aria-hidden="true" id="iconSidenav"></i>
-            <a class="m-0 text-center" href=" https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html "
-                target="_blank">
+                <a class="m-0 text-center" href="{{ route('admin.dashboard') }}">
                 <img src="{{ asset('argon/assets/img/logo-polinema.png') }}" width="52px" height="52px"
                     class="mt-3" alt="main_logo">
                 <p class="font-weight-bold">Tracer Study</p>
