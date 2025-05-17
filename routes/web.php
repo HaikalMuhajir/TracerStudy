@@ -19,4 +19,3 @@ Route::get('/', [AdminController::class, 'dashboard']);
 
 Route::post('/update-status', [statusController::class, 'updateStatus'])->name('update.status');
 
-Route::view('/alumni', 'alumni.dashboard.index', ['activeMenu' => 'dashboard']);

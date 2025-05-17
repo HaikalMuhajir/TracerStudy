@@ -8,7 +8,11 @@
 <body class="g-sidenav-show" style="background-color: #062f66;">
     {{-- <div class="min-vh-100 bg-white position-absolute w-100"></div> --}}
     {{-- Sidebar --}}
-    @includeIf('partials.sidebar.' . auth()->user()->role, ['activeMenu' => $activeMenu ?? ''])
+    @php
+        // Role sementara untuk development
+        $tempRole = 'admin';
+    @endphp
+    @includeIf('partials.sidebar.' . ($tempRole ?? auth()->user()->role), ['activeMenu' => $activeMenu ?? ''])
     {{-- End Sidebar --}}
     <main class="main-content position-relative border-radius-lg ">
         <!-- Navbar -->
