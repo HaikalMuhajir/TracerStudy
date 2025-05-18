@@ -19,3 +19,15 @@ Route::get('/', [AdminController::class, 'dashboard']);
 
 Route::post('/update-status', [statusController::class, 'updateStatus'])->name('update.status');
 
+// Rute untuk tampilkan mahasiswa
+Route::get('/mahasiswa', [AdminController::class, 'mahasiswa'])->name('admin.mahasiswa.index');
+
+Route::get('/mahasiswa/detail/{alumni_id}', [AdminController::class, 'showDetail']);
+
+Route::get('/mahasiswa/edit/{alumni_id}', [AdminController::class, 'edit'])->name('admin.mahasiswa.edit');
+
+Route::put('/mahasiswa/update/{alumni_id}', [AdminController::class, 'update'])->name('mahasiswa.update');
+
+Route::delete('/mahasiswa/delete/{alumni_id}', [AdminController::class, 'delete'])->name('mahasiswa.delete');
+
+Route::get('/mahasiswa/search', [AdminController::class, 'search']);
