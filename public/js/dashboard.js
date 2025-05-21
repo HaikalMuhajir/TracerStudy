@@ -93,19 +93,23 @@ const dataByProdi = {
     }
 };
 
-let profesiChart, instansiChart, kepuasanPenggunaLulusan1, kepuasanPenggunaLulusan2, kepuasanPenggunaLulusan3, kepuasanPenggunaLulusan4, kepuasanPenggunaLulusan5, kepuasanPenggunaLulusan6, kepuasanPenggunaLulusan7;
+let profesiChart, instansiChart, kepuasanPenggunaChart;
+
+const kepuasanTitles = {
+    'kepuasanPenggunaLulusan1': 'Kerjasama Tim',
+    'kepuasanPenggunaLulusan2': 'Keahlian di Bidang TI',
+    'kepuasanPenggunaLulusan3': 'Kemampuan Berbahasa Asing (Inggris)',
+    'kepuasanPenggunaLulusan4': 'Kemampuan Berkomunikasi',
+    'kepuasanPenggunaLulusan5': 'Pengembangan Diri',
+    'kepuasanPenggunaLulusan6': 'Kepemimpinan',
+    'kepuasanPenggunaLulusan7': 'Etos Kerja'
+};
 
 // Initialize Charts
 function initializeCharts(prodiData) {
     if (profesiChart) profesiChart.destroy();
     if (instansiChart) instansiChart.destroy();
-    if (kepuasanPenggunaLulusan1) kepuasanPenggunaLulusan1.destroy();
-    if (kepuasanPenggunaLulusan2) kepuasanPenggunaLulusan2.destroy();
-    if (kepuasanPenggunaLulusan3) kepuasanPenggunaLulusan3.destroy();
-    if (kepuasanPenggunaLulusan4) kepuasanPenggunaLulusan4.destroy();
-    if (kepuasanPenggunaLulusan5) kepuasanPenggunaLulusan5.destroy();
-    if (kepuasanPenggunaLulusan6) kepuasanPenggunaLulusan6.destroy();
-    if (kepuasanPenggunaLulusan7) kepuasanPenggunaLulusan7.destroy();
+    if (kepuasanPenggunaChart) kepuasanPenggunaChart.destroy();
 
     profesiChart = new Chart(document.getElementById('sebaranProfesiChart'), {
         type: 'pie',
@@ -130,7 +134,7 @@ function initializeCharts(prodiData) {
                     padding: { bottom: 10 }
                 },
                 legend: {
-                    position: 'right',
+                    position: 'bottom',
                     labels: {
                         font: { size: 12 },
                         color: '#374151',
@@ -178,7 +182,7 @@ function initializeCharts(prodiData) {
                     padding: { bottom: 10 }
                 },
                 legend: {
-                    position: 'right',
+                    position: 'bottom',
                     labels: {
                         font: { size: 12 },
                         color: '#374151',
@@ -194,13 +198,19 @@ function initializeCharts(prodiData) {
         }
     });
 
-    // Kerjasama Tim
-    kepuasanPenggunaLulusan1 = new Chart(document.getElementById('kepuasanPenggunaLulusan1'), {
+    updateKepuasanChart(prodiData, document.getElementById('kepuasan-criteria').value);
+}
+
+// Update Kepuasan Chart
+function updateKepuasanChart(prodiData, criteria) {
+    if (kepuasanPenggunaChart) kepuasanPenggunaChart.destroy();
+
+    kepuasanPenggunaChart = new Chart(document.getElementById('kepuasanPenggunaChart'), {
         type: 'pie',
         data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan1),
+            labels: Object.keys(prodiData[criteria]),
             datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan1),
+                data: Object.values(prodiData[criteria]),
                 backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
@@ -211,259 +221,24 @@ function initializeCharts(prodiData) {
             maintainAspectRatio: false,
             plugins: {
                 title: {
-                    display: true,
-                    text: 'Kerjasama Tim',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
+                    display: false,
                 },
                 legend: {
-                    position: 'right',
+                    position: 'bottom',
                     labels: {
                         font: { size: 12 },
                         color: '#374151',
                         padding: 12,
                         boxWidth: 12
                     }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Keahlian di Bidang TI
-    kepuasanPenggunaLulusan2 = new Chart(document.getElementById('kepuasanPenggunaLulusan2'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan2),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan2),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Keahlian di Bidang TI',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
                 },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Kemampuan berbahasa Asing (Inggris)
-    kepuasanPenggunaLulusan3 = new Chart(document.getElementById('kepuasanPenggunaLulusan3'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan3),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan3),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Kemampuan berbahasa Asing (Inggris)',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
-                },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Kemampuan Berkomunikasi
-    kepuasanPenggunaLulusan4 = new Chart(document.getElementById('kepuasanPenggunaLulusan4'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan4),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan4),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Kemampuan Berkomunikasi',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
-                },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Pengembangan Diri
-    kepuasanPenggunaLulusan5 = new Chart(document.getElementById('kepuasanPenggunaLulusan5'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan5),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan5),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Pengembangan Diri',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
-                },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Kepemimpinan
-    kepuasanPenggunaLulusan6 = new Chart(document.getElementById('kepuasanPenggunaLulusan6'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan6),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan6),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Kepemimpinan',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
-                },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutQuad'
-            }
-        }
-    });
-
-    // Etos Kerja
-    kepuasanPenggunaLulusan7 = new Chart(document.getElementById('kepuasanPenggunaLulusan7'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(prodiData.kepuasanPenggunaLulusan7),
-            datasets: [{
-                data: Object.values(prodiData.kepuasanPenggunaLulusan7),
-                backgroundColor: ['#fde047', '#f87171', '#60a5fa', '#34d399'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Etos Kerja',
-                    font: { size: 16, weight: '600' },
-                    color: '#1e3a8a',
-                    padding: { bottom: 10 }
-                },
-                legend: {
-                    position: 'right',
-                    labels: {
-                        font: { size: 12 },
-                        color: '#374151',
-                        padding: 12,
-                        boxWidth: 12
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.label || '';
+                            if (label) label += ': ';
+                            return label + context.raw + '%';
+                        }
                     }
                 }
             },
@@ -590,4 +365,11 @@ document.getElementById('apply-filter').addEventListener('click', function () {
     initializeCharts(dataByProdi[prodi]);
     updateTable(dataByProdi[prodi], tahunAwal, tahunAkhir);
     updateTableMasaTunggu(dataByProdi[prodi], tahunAwal, tahunAkhir);
+});
+
+// Kepuasan Criteria Handler
+document.getElementById('kepuasan-criteria').addEventListener('change', function () {
+    const prodi = document.getElementById('prodi').value;
+    const criteria = this.value;
+    updateKepuasanChart(dataByProdi[prodi], criteria);
 });
