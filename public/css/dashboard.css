@@ -1,0 +1,242 @@
+.dashboard-container {
+    min-height: 100vh;
+    padding: 40px 60px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filter-section {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #e0e7ff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    margin-bottom: 40px;
+    transition: transform 0.3s ease;
+}
+
+.filter-section:hover {
+    transform: translateY(-5px);
+}
+
+.filter-section h3 {
+    font-size: 1.75rem;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.filter-section .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.filter-section label {
+    font-size: 0.95rem;
+    color: #1e3a8a;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.filter-section select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    background: #f0f9ff;
+    color: #1e40af;
+    font-weight: 500;
+    transition: border-color 0.3s ease;
+}
+
+.filter-section select:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.filter-section button {
+    padding: 12px 24px;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.filter-section button:hover {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    transform: translateY(-2px);
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.judul-halaman {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.subjudul-halaman {
+    font-size: 1.25rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    height: 450px; /* Tinggi default untuk semua kontainer */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hapus aturan khusus untuk nth-child(3) agar tinggi seragam */
+.charts-grid .chart-container:nth-child(3) {
+    height: 450px; /* Samakan dengan kontainer lain */
+}
+
+.charts-grid .chart-container:nth-child(3) .filter-section {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: 10px 20px;
+}
+
+.chart-container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.chart-container .filter-section select {
+    max-width: 300px;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    flex-grow: 1;
+    object-fit: contain;
+}
+
+/* Improved Table Styles */
+.table-section {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.table-section h3 {
+    font-size: 1.75rem;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+#data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#data-table th,
+#data-table td {
+    padding: 10px 12px;
+    text-align: center;
+    border-bottom: 1px solid #e0e7ff;
+}
+
+#data-table th {
+    background: #f8fafc;
+    color: #1e3a8a;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+#data-table thead tr:first-child th {
+    background: #e0e7ff;
+    border-bottom: 2px solid #93c5fd;
+}
+
+#data-table tbody tr:hover {
+    background-color: #f0f9ff;
+}
+
+#data-table tfoot tr {
+    background: linear-gradient(90deg, #f0f4f8, #e0e7ff);
+    border-top: 2px solid #93c5fd;
+    font-weight: 600;
+}
+
+/* Zebra striping for better readability */
+#data-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+#data-table tbody tr:nth-child(even):hover {
+    background-color: #f0f9ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        padding: 20px;
+    }
+
+    .judul-halaman {
+        font-size: 2rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 350px; /* Tinggi yang wajar untuk layar kecil */
+    }
+
+    .charts-grid .chart-container:nth-child(3) {
+        height: 350px; /* Samakan dengan kontainer lain pada layar kecil */
+    }
+
+    .chart-container .filter-section select {
+        max-width: 100%;
+    }
+
+    #data-table th,
+    #data-table td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+}
