@@ -1,0 +1,81 @@
+/* Button Styles for Detail, Edit, and Delete */
+.btn-primary {
+    background-color: #007bff; /* Blue for Detail */
+  }
+  
+  .btn-warning {
+    background-color: #ffc107; /* Yellow for Edit */
+  }
+  
+  .btn-danger {
+    background-color: #dc3545; /* Red for Delete */
+  }
+  
+  /* Button Styles for "Sudah Mengisi" and "Belum Mengisi" */
+  .status-toggle {
+    font-weight: bold;
+    color: white;
+    border-radius: 50px;
+    padding: 5px 15px;
+    text-align: center;
+    width: 150px;
+  }
+  
+  .btn-success {
+    background-color: #28a745; /* Green for Sudah Mengisi */
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d; /* Gray for Belum Mengisi */
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 15px; /* Add spacing between action buttons */
+  }
+  
+  .action-btn {
+    font-weight: bold;
+    color: white;
+    padding: 8px 25px; /* Add more padding for better size */
+    border-radius: 50px;
+  }
+  
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+/* Styling for Modal */
+.modal-content {
+  /* border-radius: 8px; Rounded corners for the modal */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  /* padding: 8px; */
+}
+
+/* Footer buttons */
+.modal-footer .btn {
+  font-weight: bold;
+  padding: 10px 20px; /* Add padding for buttons */
+  border-radius: 5px;
+}
+
+/* Styling for the cancel button */
+.modal-footer .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Styling for the delete button */
+.modal-footer .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Close button */
+.btn-close {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 16px;
+}
+

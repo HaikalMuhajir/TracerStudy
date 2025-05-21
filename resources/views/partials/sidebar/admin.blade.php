@@ -20,14 +20,14 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ $activeMenu == 'mahasiswa' ? 'active' : '' }}"
-                    href="{{ route('admin.mahasiswa.index') }}">
+                <a class="nav-link {{ $activeMenu == 'alumni' ? 'active' : '' }}"
+                    href="{{ route('admin.alumni.alumni') }}">
                     <i class="fa fa-user-graduate"></i>
-                    <span class="nav-link-text ms-1">Data Mahasiswa</span>
+                    <span class="nav-link-text ms-1">Data Alumni</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}">
+                <a class="nav-link" href="#">
                     <div
                         class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fa fa-sign-out-alt text-dark text-sm opacity-10"></i>
