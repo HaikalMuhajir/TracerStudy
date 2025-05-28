@@ -1,33 +1,49 @@
 <?php
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
+
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\statusController;
+use App\Http\Controllers\Auth\OtpLoginController;
+use App\Http\Controllers\Auth\SetPasswordController;
+use Illuminate\Support\Facades\Auth;
 
-Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/login', [AdminController::class, 'login'])->name('admin.login');
-Route::post('/login', [AdminController::class, 'authenticate'])->name('admin.login.submit');
-Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/', fn() => view('auth.login'))->name('login');
 
+// Login via OTP
+Route::post('/otp-send', [OtpLoginController::class, 'sendOtp'])->name('otp.send');
+Route::get('/otp-verify', [OtpLoginController::class, 'showVerifyForm'])->name('otp.verify.form');
+Route::post('/otp-verify', [OtpLoginController::class, 'verifyOtp'])->name('otp.verify');
 
-Route::get('/', [AdminController::class, 'dashboard']);
+// Set password setelah OTP login
+Route::middleware('auth')->group(function () {
+    Route::get('/set-password', [SetPasswordController::class, 'showForm'])->name('password.set.form');
+    Route::post('/set-password', [SetPasswordController::class, 'store'])->name('password.set');
+});
 
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/mahasiswa', [AdminController::class, 'mahasiswa'])->name('admin.mahasiswa.index');
-    Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
+// Redirect dashboard sesuai role
+Route::middleware('auth')->get('/dashboard', function () {
+    $user = Auth::user();
+    return $user->role === 'admin'
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('alumni.dashboard');
+})->name('dashboard');
 
-Route::post('/update-status', [statusController::class, 'updateStatus'])->name('update.status');
+// Dashboard masing-masing role
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
+    Route::get('/alumni/dashboard', fn() => view('alumni.dashboard'))->name('alumni.dashboard');
+});
 
-// Rute untuk tampilkan mahasiswa
-Route::get('/mahasiswa', [AdminController::class, 'mahasiswa'])->name('admin.mahasiswa.index');
+// Profile
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::get('/mahasiswa/detail/{alumni_id}', [AdminController::class, 'showDetail']);
-
-Route::get('/mahasiswa/edit/{alumni_id}', [AdminController::class, 'edit'])->name('admin.mahasiswa.edit');
-
-Route::put('/mahasiswa/update/{alumni_id}', [AdminController::class, 'update'])->name('mahasiswa.update');
-
-Route::delete('/mahasiswa/delete/{alumni_id}', [AdminController::class, 'delete'])->name('mahasiswa.delete');
-
-Route::get('/mahasiswa/search', [AdminController::class, 'search']);
+require __DIR__.'/auth.php';

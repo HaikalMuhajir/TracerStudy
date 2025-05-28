@@ -15,7 +15,7 @@ class Alumni extends Model
 
     protected $fillable = [
         'user_id', 'prodi_id', 'nim', 'no_hp', 'jenis_instansi', 'nama_instansi', 'skala_instansi',
-        'lokasi_instansi', 'kategori_profesi', 'profesi', 'tanggal_lulus', 'tahun_lulus', 'tanggal_pertama_kerja'
+        'lokasi_instansi', 'kategori_profesi', 'profesi', 'tanggal_lulus', 'tahun_lulus', 'tanggal_pertama_kerja',
     ];
 
     public function user()
