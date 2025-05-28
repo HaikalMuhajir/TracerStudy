@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('jabatan');
             $table->string('no_hp');
             $table->string('email')->unique();
+            $table->string('token', 64)->unique()->nullable();
 
             $table->timestamps();
         });

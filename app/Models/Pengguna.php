@@ -13,13 +13,8 @@ class Pengguna extends Model
     protected $primaryKey = 'pengguna_id';
 
     protected $fillable = [
-        'alumni_id', 'nama', 'jabatan', 'no_hp', 'email',
+        'alumni_id', 'nama', 'jabatan', 'no_hp', 'email', 'token'
     ];
-
-    public function alumni()
-    {
-        return $this->belongsTo(Alumni::class, 'alumni_id', 'alumni_id');
-    }
 
     public function performa()
     {

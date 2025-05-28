@@ -2,6 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\ProgramStudi;
+
+Route::get('/program-studi', function() {
+    $programStudi = ProgramStudi::select('prodi_id', 'nama_prodi')->get();
+    return response()->json($programStudi);
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -18,13 +18,13 @@ return new class extends Migration
             $table->unsignedBigInteger('pengguna_id');
             $table->unsignedBigInteger('alumni_id');
 
-            $table->enum('kerjasama_tim', [1, 2, 3, 4, 5]);
-            $table->enum('keahlian_ti', [1, 2, 3, 4, 5]);
-            $table->enum('bahasa_asing', [1, 2, 3, 4, 5]);
-            $table->enum('komunikasi', [1, 2, 3, 4, 5]);
-            $table->enum('pengembangan_diri', [1, 2, 3, 4, 5]);
-            $table->enum('kepemimpinan', [1, 2, 3, 4, 5]);
-            $table->enum('etos_kerja', [1, 2, 3, 4, 5]);
+            $table->enum('kerjasama_tim', [1, 2, 3, 4]);
+            $table->enum('keahlian_ti', [1, 2, 3, 4]);
+            $table->enum('bahasa_asing', [1, 2, 3, 4]);
+            $table->enum('komunikasi', [1, 2, 3, 4]);
+            $table->enum('pengembangan_diri', [1, 2, 3, 4]);
+            $table->enum('kepemimpinan', [1, 2, 3, 4]);
+            $table->enum('etos_kerja', [1, 2, 3, 4]);
 
             // Teks bebas
             $table->text('kompetensi_kurang')->nullable();
