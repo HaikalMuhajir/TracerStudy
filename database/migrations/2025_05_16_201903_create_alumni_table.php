@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('lokasi_instansi')->nullable();
             $table->string('kategori_profesi')->nullable();
             $table->string('profesi')->nullable();
-            $table->enum('is_infokom', [0 , 1 ])->nullable();
             $table->string('token', 64)->unique()->nullable();
 
 

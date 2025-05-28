@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Alumni;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AlumniImport;
 
 class AlumniController extends Controller
 {
@@ -15,15 +18,28 @@ class AlumniController extends Controller
      */
     public function index()
     {
-        // Perbaikan: Tambahkan eager loading dengan relasi programStudi
-        $alumni = Alumni::with(['programStudi' => function($query) {
-            $query->select('prodi_id', 'nama_prodi');
-        }])->get();
-        
-        // Perbaikan: Kirim juga $programStudi ke view jika diperlukan untuk form
+        $prodi = session('filter.prodi');
+        $tahunAwal = session('filter.tahun_awal');
+        $tahunAkhir = session('filter.tahun_akhir');
+
+        $query = Alumni::with('programStudi'); // Pastikan relasi ini ada di model Alumni
+
+        if ($prodi) {
+            $query->where('prodi_id', $prodi);
+        }
+
+        if ($tahunAwal) {
+            $query->whereYear('tanggal_lulus', '>=', $tahunAwal);
+        }
+
+        if ($tahunAkhir) {
+            $query->whereYear('tanggal_lulus', '<=', $tahunAkhir);
+        }
+
+        $alumni = $query->get();
         $programStudi = ProgramStudi::all();
-        
-        return view('alumni.index', compact('alumni', 'programStudi'));
+
+        return view('alumni.index', compact('alumni', 'programStudi', 'prodi', 'tahunAwal', 'tahunAkhir'));
     }
 
     /**
@@ -33,7 +49,6 @@ class AlumniController extends Controller
      */
     public function create()
     {
-        // Ambil semua program studi untuk dropdown di form create
         $programStudi = ProgramStudi::all();
         return view('alumni.create', compact('programStudi'));
     }
@@ -46,138 +61,124 @@ class AlumniController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request
-        $request->validate([
+        $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'nim' => 'required|numeric',
+            'nim' => 'required|numeric|unique:alumni,nim',
             'prodi_id' => 'required|exists:program_studi,prodi_id',
-            'email' => 'required|email',
-            'no_hp' => 'nullable|numeric',
-            'jenis_instansi' => 'nullable|string',
-            'nama_instansi' => 'nullable|string',
-            'skala_instansi' => 'nullable|string',
-            'lokasi_instansi' => 'nullable|string',
-            'kategori_profesi' => 'nullable|string',
-            'profesi' => 'nullable|string',
+            'email' => 'required|email|unique:alumni,email',
+            'no_hp' => 'nullable|numeric|digits_between:10,15',
+            'jenis_instansi' => 'nullable|string|max:100',
+            'nama_instansi' => 'nullable|string|max:255',
+            'skala_instansi' => 'nullable|string|max:50',
+            'lokasi_instansi' => 'nullable|string|max:255',
+            'kategori_profesi' => 'nullable|string|max:100',
+            'profesi' => 'nullable|string|max:255',
             'tanggal_lulus' => 'nullable|date',
-            'tanggal_pertama_kerja' => 'nullable|date',
-            'token' => 'nullable|string',
+            'tanggal_pertama_kerja' => 'nullable|date|',
+            'token' => 'nullable|string|max:100',
             'is_infokom' => 'nullable|boolean',
         ]);
-    
-        // Create a new alumni record
-        $alumni = Alumni::create([
-            'nama' => $request->nama,
-            'prodi_id' => $request->prodi_id,
-            'nim' => $request->nim,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'jenis_instansi' => $request->jenis_instansi,
-            'nama_instansi' => $request->nama_instansi,
-            'skala_instansi' => $request->skala_instansi,
-            'lokasi_instansi' => $request->lokasi_instansi,
-            'kategori_profesi' => $request->kategori_profesi,
-            'profesi' => $request->profesi,
-            'tanggal_lulus' => $request->tanggal_lulus,
-            'tanggal_pertama_kerja' => $request->tanggal_pertama_kerja,
-            'token' => $request->token,
-            'is_infokom' => $request->is_infokom,
-        ]);
-    
-        // Respond with a success message
-        return response()->json(['success' => true, 'message' => 'Data alumni berhasil ditambahkan'], 200);
+
+        try {
+            Alumni::create($validatedData);
+            return redirect()->route('alumni.index')->with('success', 'Data alumni berhasil disimpan');
+        } catch (\Exception $e) {
+            Log::error('Error storing alumni: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menyimpan data alumni');
+        }
     }
-    
+
     /**
      * Menampilkan detail alumni berdasarkan id.
      *
      * @param int $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        $alumni = Alumni::with('programStudi')->findOrFail($id);
-        return response()->json($alumni); // Pastikan response JSON dikirimkan
+        try {
+            $alumni = Alumni::with('programStudi')->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $alumni,
+                'program_studi' => $alumni->programStudi // Menyesuaikan dengan relasi yang ada
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
-    
-
-
-    
 
     /**
      * Menampilkan form untuk mengedit data alumni.
      *
      * @param int $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\JsonResponse
      */
-    // Fungsi untuk menampilkan data modal edit
-    public function edit($id)
+     public function edit($id)
     {
-        $alumni = Alumni::with('programStudi')->findOrFail($id);
-        $programStudi = ProgramStudi::select('prodi_id', 'nama_prodi')->get();
-        
-        return response()->json([
-            'alumni' => $alumni,
-            'programStudi' => $programStudi,
-            'current_prodi' => $alumni->programStudi // Tambahkan ini untuk debug
-        ]);
+        try {
+            $alumni = Alumni::findOrFail($id);
+            $programStudi = ProgramStudi::all();
+
+            return response()->json([
+                'success' => true,
+                'alumni' => $alumni,
+                'programStudi' => $programStudi
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat data alumni'
+            ], 500);
+        }
     }
 
     /**
-     * Memperbarui data alumni berdasarkan id.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * Update data alumni
      */
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'nim' => 'required|numeric',
-            'prodi' => 'required|exists:program_studi,prodi_id',
-            'email' => 'required|email',
-            'no_hp' => 'nullable|numeric',
-            'jenis_instansi' => 'nullable|string',
-            'nama_instansi' => 'nullable|string',
-            'skala_instansi' => 'nullable|string',
-            'lokasi_instansi' => 'nullable|string',
-            'kategori_profesi' => 'nullable|string',
-            'profesi' => 'nullable|string',
+            'nim' => 'required|numeric|unique:alumni,nim,'.$id.',alumni_id',
+            'prodi_id' => 'required|exists:program_studi,prodi_id',
+            'email' => 'required|email|unique:alumni,email,'.$id.',alumni_id',
+            'no_hp' => 'nullable|numeric|digits_between:10,15',
+            'jenis_instansi' => 'nullable|string|max:100',
+            'nama_instansi' => 'nullable|string|max:255',
+            'skala_instansi' => 'nullable|string|max:50',
+            'lokasi_instansi' => 'nullable|string|max:255',
+            'kategori_profesi' => 'nullable|string|max:100',
+            'profesi' => 'nullable|string|max:255',
             'tanggal_lulus' => 'nullable|date',
-            // 'tahun_lulus' => 'nullable|date',
-            'tanggal_pertama_kerja' => 'nullable|date',
-            'token' => 'nullable|string',
+            'tanggal_pertama_kerja' => 'nullable|date|',
+            'token' => 'nullable|string|max:100',
             'is_infokom' => 'nullable|boolean',
         ]);
-    
-        $alumni = Alumni::findOrFail($id);
-        
-        $updateData = [
-            'nama' => $validatedData['nama'],
-            'prodi_id' => $validatedData['prodi'],
-            'nim' => $validatedData['nim'],
-            'email' => $validatedData['email'],
-            'no_hp' => $validatedData['no_hp'],
-            'jenis_instansi' => $validatedData['jenis_instansi'] ?? null,
-            'nama_instansi' => $validatedData['nama_instansi'] ?? null,
-            'skala_instansi' => $validatedData['skala_instansi'] ?? null,
-            'lokasi_instansi' => $validatedData['lokasi_instansi'] ?? null,
-            'kategori_profesi' => $validatedData['kategori_profesi'] ?? null,
-            'profesi' => $validatedData['profesi'] ?? null,
-            'tanggal_lulus' => $validatedData['tanggal_lulus'] ?? null,
-            // 'tahun_lulus' => $validatedData['tahun_lulus'] ?? null,
-            'tanggal_pertama_kerja' => $validatedData['tanggal_pertama_kerja'] ?? null,
-            'token' => $validatedData['token'] ?? null,
-            'is_infokom' => $validatedData['is_infokom'] ?? false,
-        ];
-    
-        $alumni->update($updateData);
-    
-        // return response()->json(['success' => true, 'message' => 'Data alumni berhasil diperbarui']);
-        // Redirect kembali ke halaman daftar alumni setelah update
-        return redirect()->route('alumni.index')->with('success', 'Data alumni berhasil diperbarui');
+
+        try {
+            $alumni = Alumni::findOrFail($id);
+            $alumni->update($validatedData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data alumni berhasil diperbarui',
+                'data' => $alumni
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating alumni: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data alumni'
+            ], 500);
+        }
     }
+
     /**
      * Menghapus data alumni berdasarkan id.
      *
@@ -186,10 +187,26 @@ class AlumniController extends Controller
      */
     public function destroy($id)
     {
-        // Mengambil data alumni dan menghapusnya
-        $alumni = Alumni::findOrFail($id);
-        $alumni->delete();
+        try {
+            $alumni = Alumni::findOrFail($id);
+            $alumni->delete();
 
-        return redirect()->route('alumni.index')->with('success', 'Data alumni berhasil dihapus');
+            return redirect()->route('alumni.index')
+                ->with('success', 'Data alumni berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error deleting alumni: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus data alumni');
+        }
     }
+
+    public function import(Request $request)
+{
+    $request->validate([
+        'file' => 'required|file|mimes:xlsx,xls',
+    ]);
+
+    Excel::import(new AlumniImport, $request->file('file'));
+
+    return back()->with('success', 'Data alumni berhasil diimpor.');
+}
 }
