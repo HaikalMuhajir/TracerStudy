@@ -11,7 +11,7 @@ class AlumniFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => \App\Models\User::factory(),
+            'nama' => $this->faker->name(),
             'prodi_id' => \App\Models\ProgramStudi::factory(),
             'nim' => $this->faker->unique()->numerify('2023######'),
             'no_hp' => $this->faker->phoneNumber(),
@@ -22,7 +22,6 @@ class AlumniFactory extends Factory
             'kategori_profesi' => $this->faker->jobTitle(),
             'profesi' => $this->faker->jobTitle(),
             'tanggal_lulus' => $this->faker->date(),
-            'tahun_lulus' => $this->faker->year(),
             'tanggal_pertama_kerja' => $this->faker->date(),
         ];
     }

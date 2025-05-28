@@ -1,32 +1,64 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AlumniController;
+use App\Http\Controllers\FilterController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\statusController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-// Rute untuk login dan dashboard
-Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-// Rute login dan logout
-Route::get('/login', [AdminController::class, 'login'])->name('admin.login');
-Route::post('/login', [AdminController::class, 'authenticate'])->name('admin.login.submit');
-Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/', function () {
+    return view('auth.login');
+});
 
-// Rute untuk dashboard admin
-Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    });
 
-// Rute untuk alumni
-Route::get('/alumni', [AdminController::class, 'alumni'])->name('admin.alumni.alumni');  // Halaman utama alumni
-Route::get('/alumni/detail/{alumni_id}', [AdminController::class, 'showDetail'])->name('admin.alumni.detail');
-Route::get('/alumni/edit/{alumni_id}', [AdminController::class, 'edit'])->name('admin.alumni.edit');
+    // Profile Routes~
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
-// Rute untuk memperbarui dan menghapus alumni
-Route::put('/alumni/update/{alumni_id}', [AdminController::class, 'update'])->name('admin.alumni.update');
-Route::delete('/alumni/delete/{alumni_id}', [AdminController::class, 'delete'])->name('admin.alumni.delete');
+    // Alumni Routes
+    Route::prefix('alumni')->group(function () {
+        Route::get('/', [AlumniController::class, 'index'])->name('alumni.index');
+        Route::get('/create', [AlumniController::class, 'create'])->name('alumni.create');
+        Route::post('/', [AlumniController::class, 'store'])->name('alumni.store');
+        Route::get('/{id}/show', [AlumniController::class, 'show'])->name('alumni.show');
+        Route::get('/{id}/edit', [AlumniController::class, 'edit'])->name('alumni.edit');
+        Route::put('/{id}', [AlumniController::class, 'update'])->name('alumni.update');
+        Route::delete('/{id}', [AlumniController::class, 'destroy'])->name('alumni.destroy');
+        Route::get('/filter', [AlumniController::class, 'filter'])->name('alumni.filter');
+        Route::get('/data', [AlumniController::class, 'getData'])->name('alumni.data');
 
-// Rute untuk pencarian alumni
-Route::get('/alumni/search', [AdminController::class, 'search'])->name('admin.alumni.search');
+    });
+    // Laporan Route
+    Route::prefix('laporan')->group(function () {
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/export', [LaporanController::class, 'create'])->name('laporan.create');
+        Route::get('/preview', [LaporanController::class, 'create'])->name('laporan.create');
+    });
 
-// Rute untuk update status alumni
-Route::post('/update-status', [statusController::class, 'updateStatus'])->name('update.status');
+    // Filter Form
+    Route::post('/filter/set', [FilterController::class, 'set'])->name('filter.set');
+    Route::get('/filter/reset', [FilterController::class, 'reset'])->name('filter.reset');
+});
+
+require __DIR__ . '/auth.php';

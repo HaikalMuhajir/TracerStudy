@@ -7,8 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticatable implements MustVerifyEmail
-{
+class User extends Authenticatable{
     use Notifiable;
     use HasFactory;
 
@@ -16,7 +15,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $primaryKey = 'user_id';
 
     protected $fillable = [
-        'name', 'email', 'password', 'role',
+        'name', 'email', 'password',
     ];
 
     protected $hidden = [
@@ -26,9 +25,4 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function alumni()
-    {
-        return $this->hasOne(Alumni::class, 'user_id', 'user_id');
-    }
 }

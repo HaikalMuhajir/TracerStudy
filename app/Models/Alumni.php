@@ -14,14 +14,9 @@ class Alumni extends Model
     protected $primaryKey = 'alumni_id';
 
     protected $fillable = [
-        'user_id', 'prodi_id', 'nim', 'no_hp', 'jenis_instansi', 'nama_instansi', 'skala_instansi',
-        'lokasi_instansi', 'kategori_profesi', 'profesi', 'tanggal_lulus', 'tahun_lulus', 'tanggal_pertama_kerja'
+        'nama','prodi_id', 'nim','email', 'no_hp', 'jenis_instansi', 'nama_instansi', 'skala_instansi',
+        'lokasi_instansi', 'kategori_profesi', 'profesi', 'tanggal_lulus', 'tanggal_pertama_kerja', 'token', 'is_infokom'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
-    }
 
     public function programStudi()
     {
@@ -33,8 +28,4 @@ class Alumni extends Model
         return $this->hasMany(Performa::class, 'alumni_id', 'alumni_id');
     }
 
-    public function penggunas()
-    {
-        return $this->hasMany(Pengguna::class, 'alumni_id', 'alumni_id');
-    }
 }
