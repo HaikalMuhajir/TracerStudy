@@ -20,9 +20,6 @@
                 <x-nav-link :href="route('alumni.index')" :active="request()->routeIs('alumni.index')">
                     {{ __('Data Alumni') }}
                 </x-nav-link>
-                <x-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.index')">
-                    {{ __('Laporan') }}
-                </x-nav-link>
                 </div>
 
             </div>

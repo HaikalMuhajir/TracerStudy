@@ -50,12 +50,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/import', [AlumniController::class, 'import'])->name('alumni.import');
 
     });
-    // Laporan Route
-    Route::prefix('laporan')->group(function () {
-        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/export', [LaporanController::class, 'create'])->name('laporan.create');
-        Route::get('/preview', [LaporanController::class, 'create'])->name('laporan.create');
-    });
 
     // Filter Form
     Route::post('/filter/set', [FilterController::class, 'set'])->name('filter.set');

@@ -51,14 +51,14 @@
                     </div>
 
                     <table id="alumniTable" class="w-full text-sm text-left text-gray-600">
-                        <thead class="text-xs text-gray-500 uppercase border-b border-t border-gray-200 ">
+                        <thead class="text-xs text-gray-500 uppercase border-b border-t border-gray-500 ">
                             <tr>
                                 <th class="px-4 py-4" rowspan="2">No</th>
                                 <th class="px-4 py-4" rowspan="2">Nama</th>
                                 <th class="px-4 py-4" rowspan="2">NIM</th>
                                 <th class="px-4 py-4" rowspan="2">Program Studi</th>
                                 <th class="px-4 py-4" rowspan="2">Email</th>
-                                <th class="px-4 py-4 text-center border-b border-gray-200" colspan="3">Aksi</th>
+                                <th class="px-4 py-4 text-center border-b border-gray-500" colspan="3">Aksi</th>
                             </tr>
                             <tr>
                                 <th class="px-4 py-4">Show</th>
@@ -69,7 +69,7 @@
 
                         <tbody class="text-center">
                             @foreach ($alumni as $index => $alum)
-                                <tr>
+                                <tr class="border-b border-gray-100">
                                     <td class="px-4 py-4">{{ $alumni->firstItem() + $index }}</td>
                                     <td class="px-4 py-4">{{ $alum->nama }}</td>
                                     <td class="px-4 py-4">{{ $alum->nim }}</td>
