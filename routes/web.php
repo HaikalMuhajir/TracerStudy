@@ -5,6 +5,7 @@ use App\Http\Controllers\AlumniController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -57,3 +58,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::prefix('export')->group(function () {
+    Route::get('alumni-with-atasan', [ExportController::class, 'exportAlumniWithAtasan'])->name('export.alumni_with_atasan');
+    Route::get('alumni-without-atasan', [ExportController::class, 'exportAlumniWithoutAtasan'])->name('export.alumni_without_atasan');
+    Route::get('atasan-with-performa', [ExportController::class, 'exportAtasanWithPerforma'])->name('export.atasan_with_performa');
+    Route::get('atasan-without-performa', [ExportController::class, 'exportAtasanWithoutPerforma'])->name('export.atasan_without_performa');
+    Route::get('all', [ExportController::class, 'exportAll'])->name('export.all');
+});

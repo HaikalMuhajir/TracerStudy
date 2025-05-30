@@ -42,6 +42,9 @@
 
                     {{-- Spacer kanan agar judul tetap di tengah meski tidak ada konten di kanan --}}
                     <div style="width: 100px"></div>
+                    <a href="{{ route('export.all') }}" class="btn btn-primary">
+                        <i class="fas fa-file-export"></i> Export Semua Data
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto">

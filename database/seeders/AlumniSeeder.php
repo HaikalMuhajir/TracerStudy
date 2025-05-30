@@ -57,7 +57,7 @@ class AlumniSeeder extends Seeder
                 'lokasi_instansi' => 'Kota ' . $i,
                 'kategori_profesi' => $kategori,
                 'profesi' => $profesi,
-                'is_infokom' => $isInfokom,
+                // 'is_infokom' => $isInfokom,
                 'tanggal_lulus' => now()->subYears(rand(0, 10))->format('Y-m-d'),
                 'tanggal_pertama_kerja' => now()->subYears(rand(0, 9))->format('Y-m-d'),
                 'token' => Str::random(64),
