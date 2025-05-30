@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\AlumniImport;
+use Illuminate\Support\Facades\Mail;
 
 class AlumniController extends Controller
 {
@@ -22,7 +23,7 @@ class AlumniController extends Controller
         $tahunAwal = session('filter.tahun_awal');
         $tahunAkhir = session('filter.tahun_akhir');
 
-        $query = Alumni::with('programStudi'); // Pastikan relasi ini ada di model Alumni
+        $query = Alumni::with('programStudi');
 
         if ($prodi) {
             $query->where('prodi_id', $prodi);
@@ -36,7 +37,7 @@ class AlumniController extends Controller
             $query->whereYear('tanggal_lulus', '<=', $tahunAkhir);
         }
 
-        $alumni = $query->get();
+        $alumni = $query->paginate(10);
         $programStudi = ProgramStudi::all();
 
         return view('alumni.index', compact('alumni', 'programStudi', 'prodi', 'tahunAwal', 'tahunAkhir'));
@@ -102,7 +103,7 @@ class AlumniController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $alumni,
-                'program_studi' => $alumni->programStudi // Menyesuaikan dengan relasi yang ada
+                'program_studi' => $alumni->programStudi
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -119,7 +120,7 @@ class AlumniController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-     public function edit($id)
+    public function edit($id)
     {
         try {
             $alumni = Alumni::findOrFail($id);
@@ -145,9 +146,9 @@ class AlumniController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'nim' => 'required|numeric|unique:alumni,nim,'.$id.',alumni_id',
+            'nim' => 'required|numeric|unique:alumni,nim,' . $id . ',alumni_id',
             'prodi_id' => 'required|exists:program_studi,prodi_id',
-            'email' => 'required|email|unique:alumni,email,'.$id.',alumni_id',
+            'email' => 'required|email|unique:alumni,email,' . $id . ',alumni_id',
             'no_hp' => 'nullable|numeric|digits_between:10,15',
             'jenis_instansi' => 'nullable|string|max:100',
             'nama_instansi' => 'nullable|string|max:255',
@@ -156,14 +157,40 @@ class AlumniController extends Controller
             'kategori_profesi' => 'nullable|string|max:100',
             'profesi' => 'nullable|string|max:255',
             'tanggal_lulus' => 'nullable|date',
-            'tanggal_pertama_kerja' => 'nullable|date|',
+            'tanggal_pertama_kerja' => 'nullable|date',
             'token' => 'nullable|string|max:100',
             'is_infokom' => 'nullable|boolean',
         ]);
 
         try {
             $alumni = Alumni::findOrFail($id);
+            $oldEmail = $alumni->email;
+            $oldPhone = $alumni->no_hp;
+
             $alumni->update($validatedData);
+
+            $link = url('/form-alumni/' . $alumni->token);
+
+            if ($validatedData['email'] !== $oldEmail && $alumni->email) {
+                Mail::to($alumni->email)->send(new \App\Mail\TracerStudyLinkMail($alumni, $link));
+            }
+
+            if ($validatedData['no_hp'] !== $oldPhone && $alumni->no_hp) {
+                $message = "*Halo {$alumni->nama}* 👋
+
+Kami dari *Tim Tracer Study POLINEMA* mengundang Anda untuk berpartisipasi dalam pengisian *Tracer Study Alumni*.
+
+📝 Silakan isi formulir melalui link berikut:
+{$link}
+
+Partisipasi Anda sangat berarti untuk pengembangan institusi dan peningkatan kualitas lulusan.
+
+Terima kasih atas waktunya 🙏
+Salam hormat,
+*Tim Tracer Study POLINEMA*";
+
+                $this->sendWhatsAppMessage($alumni->no_hp, $message);
+            }
 
             return response()->json([
                 'success' => true,
@@ -178,6 +205,7 @@ class AlumniController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Menghapus data alumni berdasarkan id.
@@ -200,13 +228,34 @@ class AlumniController extends Controller
     }
 
     public function import(Request $request)
-{
-    $request->validate([
-        'file' => 'required|file|mimes:xlsx,xls',
-    ]);
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
 
-    Excel::import(new AlumniImport, $request->file('file'));
+        Excel::import(new AlumniImport, $request->file('file'));
 
-    return back()->with('success', 'Data alumni berhasil diimpor.');
-}
+        return back()->with('success', 'Data alumni berhasil diimpor.');
+    }
+
+    private function sendWhatsAppMessage($toNumber, $message)
+    {
+        $sid = env('TWILIO_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $twilioNumber = env('TWILIO_WHATSAPP_FROM');
+
+        $client = new \Twilio\Rest\Client($sid, $token);
+
+        try {
+            $client->messages->create(
+                "whatsapp:+62" . ltrim($toNumber, '0'),
+                [
+                    'from' => $twilioNumber,
+                    'body' => $message
+                ]
+            );
+        } catch (\Exception $e) {
+            Log::error("Gagal kirim WA ke {$toNumber}: " . $e->getMessage());
+        }
+    }
 }

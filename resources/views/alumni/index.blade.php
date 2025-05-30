@@ -31,7 +31,6 @@
                                 });
                             </script>
                         @endif
-
                     </form>
 
                     {{-- Judul di tengah secara visual --}}
@@ -46,6 +45,11 @@
                 </div>
 
                 <div class="overflow-x-auto">
+                    <div class="mb-4 px-4">
+                        <input type="text" id="searchInput" placeholder="Cari alumni berdasarkan nama atau NIM..."
+                            class="border border-gray-300 rounded-md px-4 py-2 sm:w-1/3" style="width: 40%" />
+                    </div>
+
                     <table id="alumniTable" class="w-full text-sm text-left text-gray-600">
                         <thead class="text-xs text-gray-500 uppercase border-b border-t border-gray-200 ">
                             <tr>
@@ -66,22 +70,19 @@
                         <tbody class="text-center">
                             @foreach ($alumni as $index => $alum)
                                 <tr>
-                                    <td class="px-4 py-4">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-4">{{ $alumni->firstItem() + $index }}</td>
                                     <td class="px-4 py-4">{{ $alum->nama }}</td>
                                     <td class="px-4 py-4">{{ $alum->nim }}</td>
                                     <td class="px-4 py-4">{{ $alum->programStudi->nama_prodi }}</td>
                                     <td class="px-4 py-4">{{ $alum->email }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <a href="javascript:void(0)" onclick="openShowModal({{ $alum->alumni_id }})"
-                                            class="text-blue-600 hover:text-blue-900" style="line-height: 1;">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
+                                            class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <a href="javascript:void(0)" onclick="openEditModal({{ $alum->alumni_id }})"
-                                            class="text-yellow-600 hover:text-yellow-900" style="line-height: 1;">
-                                            <i class="fas fa-pen-to-square"></i>
-                                        </a>
+                                            class="text-yellow-600 hover:text-yellow-900"><i
+                                                class="fas fa-pen-to-square"></i></a>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <form action="{{ route('alumni.destroy', $alum->alumni_id) }}" method="POST"
@@ -90,16 +91,17 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900"
-                                                style="background: none; border: none; padding: 0; line-height: 1; cursor: pointer;">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                                style="background: none; border: none;"><i
+                                                    class="fas fa-trash-alt"></i></button>
                                         </form>
                                     </td>
-
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="mt-4 px-4">
+                        {{ $alumni->links() }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,4 +109,24 @@
     @include('alumni.show-modal')
     @include('alumni.edit-modal')
     <script src="{{ asset('assets/js/data-alumni.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("searchInput");
+            const table = document.getElementById("alumniTable");
+            const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            searchInput.addEventListener("keyup", function() {
+                const keyword = this.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    let rowText = rows[i].textContent.toLowerCase();
+                    if (rowText.includes(keyword)) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

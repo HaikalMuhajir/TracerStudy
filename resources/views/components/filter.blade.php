@@ -15,7 +15,7 @@
     <select name="tahun_awal" id="tahun_awal_header" style="margin-right: 8px;"
         class="border-gray-300 text-sm rounded-md shadow-sm">
         <option value="" disabled {{ request('tahun_awal') ? '' : 'selected' }}>Tahun Awal</option>
-        @for ($year = 2020; $year <= 2025; $year++)
+        @for ($year = 2019; $year <= 2024; $year++)
             <option value="{{ $year }}" {{ session('filter.tahun_awal') == $year ? 'selected' : '' }}>
                 {{ $year }}
             </option>
@@ -25,7 +25,7 @@
     <select name="tahun_akhir" id="tahun_akhir_header" style="margin-right: 8px;"
         class="border-gray-300 text-sm rounded-md shadow-sm">
         <option value="" disabled {{ request('tahun_akhir') ? '' : 'selected' }}>Tahun Akhir</option>
-        @for ($year = 2020; $year <= 2025; $year++)
+        @for ($year = 2019; $year <= 2024; $year++)
             <option value="{{ $year }}" {{ session('filter.tahun_akhir') == $year ? 'selected' : '' }}>
                 {{ $year }}
             </option>

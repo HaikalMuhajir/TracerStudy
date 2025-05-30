@@ -137,5 +137,23 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const table = document.getElementById("alumniTable");
+    const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    searchInput.addEventListener("keyup", function () {
+        const keyword = this.value.toLowerCase();
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowText = rows[i].textContent.toLowerCase();
+            if (rowText.includes(keyword)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    });
+});
 });
 
