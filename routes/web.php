@@ -6,6 +6,7 @@ use App\Http\Controllers\FilterController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\PenggunaController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -49,7 +50,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/filter', [AlumniController::class, 'filter'])->name('alumni.filter');
         Route::get('/data', [AlumniController::class, 'getData'])->name('alumni.data');
         Route::post('/import', [AlumniController::class, 'import'])->name('alumni.import');
+    });
 
+    Route::prefix('export')->group(function () {
+        Route::get('alumni-with-atasan', [ExportController::class, 'exportAlumniWithAtasan'])->name('export.alumni_with_atasan');
+        Route::get('alumni-without-atasan', [ExportController::class, 'exportAlumniWithoutAtasan'])->name('export.alumni_without_atasan');
+        Route::get('atasan-with-performa', [ExportController::class, 'exportAtasanWithPerforma'])->name('export.atasan_with_performa');
+        Route::get('atasan-without-performa', [ExportController::class, 'exportAtasanWithoutPerforma'])->name('export.atasan_without_performa');
+        Route::get('all', [ExportController::class, 'exportAll'])->name('export.all');
     });
 
     // Filter Form
@@ -57,12 +65,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/filter/reset', [FilterController::class, 'reset'])->name('filter.reset');
 });
 
-require __DIR__ . '/auth.php';
+Route::get('/form-alumni/{token}', [AlumniController::class, 'showForm']);
+Route::post('/form-alumni/{token}', [AlumniController::class, 'submitForm']);
 
-Route::prefix('export')->group(function () {
-    Route::get('alumni-with-atasan', [ExportController::class, 'exportAlumniWithAtasan'])->name('export.alumni_with_atasan');
-    Route::get('alumni-without-atasan', [ExportController::class, 'exportAlumniWithoutAtasan'])->name('export.alumni_without_atasan');
-    Route::get('atasan-with-performa', [ExportController::class, 'exportAtasanWithPerforma'])->name('export.atasan_with_performa');
-    Route::get('atasan-without-performa', [ExportController::class, 'exportAtasanWithoutPerforma'])->name('export.atasan_without_performa');
-    Route::get('all', [ExportController::class, 'exportAll'])->name('export.all');
-});
+Route::get('/form-pengguna/{token}', [PenggunaController::class, 'showForm']);
+Route::post('/form-pengguna/{token}', [PenggunaController::class, 'submitForm']);
+
+require __DIR__ . '/auth.php';

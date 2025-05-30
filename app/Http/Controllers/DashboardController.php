@@ -71,72 +71,72 @@ class DashboardController extends Controller
         return $result;
     }
 
-public function getRataRataMasaTunggu()
-{
-    $prodi = session('filter.prodi');
-    $tahunAwal = session('filter.tahun_awal');
-    $tahunAkhir = session('filter.tahun_akhir');
+    public function getRataRataMasaTunggu()
+    {
+        $prodi = session('filter.prodi');
+        $tahunAwal = session('filter.tahun_awal');
+        $tahunAkhir = session('filter.tahun_akhir');
 
-    $query = Alumni::query();
+        $query = Alumni::query();
 
-    if ($prodi) {
-        $query->where('prodi_id', $prodi);
-    }
-    if ($tahunAwal) {
-        $query->whereYear('tanggal_lulus', '>=', $tahunAwal);
-    }
-    if ($tahunAkhir) {
-        $query->whereYear('tanggal_lulus', '<=', $tahunAkhir);
-    }
-
-    // Hanya data dengan tanggal lulus (tanpa memfilter tanggal kerja)
-    $query->whereNotNull('tanggal_lulus');
-
-    $alumni = $query->get();
-
-    // Kelompokkan berdasarkan tahun lulus
-    $grouped = $alumni->groupBy(function ($item) {
-        return Carbon::parse($item->tanggal_lulus)->year;
-    });
-
-    $result = [];
-
-    foreach ($grouped as $tahun => $items) {
-        $jumlah = 0;
-        $totalBulan = 0;
-
-        foreach ($items as $alumni) {
-            // Lewati jika belum punya tanggal kerja
-            if (empty($alumni->tanggal_pertama_kerja)) {
-                continue;
-            }
-
-            $lulus = Carbon::parse($alumni->tanggal_lulus);
-            $kerja = Carbon::parse($alumni->tanggal_pertama_kerja);
-
-            // Jika kerja sebelum lulus, masa tunggu = 0
-            $masaTunggu = $kerja < $lulus ? 0 : $lulus->diffInDays($kerja) / 30.44;
-
-            $totalBulan += $masaTunggu;
-            $jumlah++;
+        if ($prodi) {
+            $query->where('prodi_id', $prodi);
+        }
+        if ($tahunAwal) {
+            $query->whereYear('tanggal_lulus', '>=', $tahunAwal);
+        }
+        if ($tahunAkhir) {
+            $query->whereYear('tanggal_lulus', '<=', $tahunAkhir);
         }
 
-        $rataRata = $jumlah > 0 ? round($totalBulan / $jumlah, 1) : 0;
+        // Hanya data dengan tanggal lulus (tanpa memfilter tanggal kerja)
+        $query->whereNotNull('tanggal_lulus');
 
-        $result[] = [
-            'tahun' => $tahun,
-            'jumlah_lulusan' => $items->count(),
-            'terlacak' => $items->filter(function ($item) {
-                return !empty($item->kategori_profesi);
-            })->count(),
-            'rata_rata_bulan' => $rataRata,
-        ];
+        $alumni = $query->get();
+
+        // Kelompokkan berdasarkan tahun lulus
+        $grouped = $alumni->groupBy(function ($item) {
+            return Carbon::parse($item->tanggal_lulus)->year;
+        });
+
+        $result = [];
+
+        foreach ($grouped as $tahun => $items) {
+            $jumlah = 0;
+            $totalBulan = 0;
+
+            foreach ($items as $alumni) {
+                // Lewati jika belum punya tanggal kerja
+                if (empty($alumni->tanggal_pertama_kerja)) {
+                    continue;
+                }
+
+                $lulus = Carbon::parse($alumni->tanggal_lulus);
+                $kerja = Carbon::parse($alumni->tanggal_pertama_kerja);
+
+                // Jika kerja sebelum lulus, masa tunggu = 0
+                $masaTunggu = $kerja < $lulus ? 0 : $lulus->diffInDays($kerja) / 30.44;
+
+                $totalBulan += $masaTunggu;
+                $jumlah++;
+            }
+
+            $rataRata = $jumlah > 0 ? round($totalBulan / $jumlah, 1) : 0;
+
+            $result[] = [
+                'tahun' => $tahun,
+                'jumlah_lulusan' => $items->count(),
+                'terlacak' => $items->filter(function ($item) {
+                    return !empty($item->kategori_profesi);
+                })->count(),
+                'rata_rata_bulan' => $rataRata,
+            ];
+        }
+
+        usort($result, fn($a, $b) => $b['tahun'] <=> $a['tahun']);
+
+        return $result;
     }
-
-    usort($result, fn($a, $b) => $b['tahun'] <=> $a['tahun']);
-
-    return $result;
-}
 
 
 
@@ -165,7 +165,10 @@ public function getRataRataMasaTunggu()
 
         // Bar Chart Pekerjaan
         $pekerjaanQuery = Alumni::select('profesi', DB::raw('COUNT(*) as jumlah'))
-            ->whereNotNull('profesi');
+            ->whereNotNull('profesi')
+            ->groupBy('profesi')
+            ->orderByDesc('jumlah')
+            ->limit(10);
 
         $this->applyBaseFilter($pekerjaanQuery, $prodi, $tahunAwal, $tahunAkhir);
 
@@ -173,7 +176,6 @@ public function getRataRataMasaTunggu()
         $pekerjaanLabels = $pekerjaanData->pluck('profesi')->toArray();
         $pekerjaanCounts = $pekerjaanData->pluck('jumlah')->toArray();
 
-        // Pie Chart Jenis Instansi
         // Pie Chart Jenis Instansi
         $defaultInstansiTypes = ['Swasta', 'Pemerintah', 'Pendidikan', 'Lainnya'];
 

@@ -4,12 +4,10 @@
     <select name="prodi" id="prodi_header" style="margin-right: 8px;"
         class="border-gray-300 text-sm rounded-md shadow-sm">
         <option value="">Semua Prodi</option>
-        <option value="1" {{ session('filter.prodi') == '1' ? 'selected' : '' }}>D4 Teknik Informatika</option>
-        <option value="2" {{ session('filter.prodi') == '2' ? 'selected' : '' }}>D4 Sistem Informasi Bisnis</option>
+        <option value="1" {{ session('filter.prodi') == '1' ? 'selected' : '' }}>D4 Sistem Informasi Bisnis</option>
+        <option value="2" {{ session('filter.prodi') == '2' ? 'selected' : '' }}>D4 Teknik Informatika</option>
         <option value="3" {{ session('filter.prodi') == '3' ? 'selected' : '' }}>D2 PPLS</option>
         <option value="4" {{ session('filter.prodi') == '4' ? 'selected' : '' }}>S2 MRTI</option>
-
-
     </select>
 
     <select name="tahun_awal" id="tahun_awal_header" style="margin-right: 8px;"

@@ -40,11 +40,12 @@
                         </h2>
                     </div>
 
-                    {{-- Spacer kanan agar judul tetap di tengah meski tidak ada konten di kanan --}}
-                    <div style="width: 100px"></div>
-                    <a href="{{ route('export.all') }}" class="btn btn-primary">
-                        <i class="fas fa-file-export"></i> Export Semua Data
+                    <a href="{{ route('export.all') }}">
+                        <x-primary-button>
+                             Export
+                        </x-primary-button>
                     </a>
+
                 </div>
 
                 <div class="overflow-x-auto">
@@ -73,21 +74,21 @@
                         <tbody class="text-center">
                             @foreach ($alumni as $index => $alum)
                                 <tr class="border-b border-gray-100">
-                                    <td class="px-4 py-4">{{ $alumni->firstItem() + $index }}</td>
-                                    <td class="px-4 py-4">{{ $alum->nama }}</td>
-                                    <td class="px-4 py-4">{{ $alum->nim }}</td>
-                                    <td class="px-4 py-4">{{ $alum->programStudi->nama_prodi }}</td>
-                                    <td class="px-4 py-4">{{ $alum->email }}</td>
-                                    <td class="px-4 py-4 text-center">
+                                    <td class="px-4 py-6">{{ $alumni->firstItem() + $index }}</td>
+                                    <td class="px-4 py-6">{{ $alum->nama }}</td>
+                                    <td class="px-4 py-6">{{ $alum->nim }}</td>
+                                    <td class="px-4 py-6">{{ $alum->programStudi->nama_prodi }}</td>
+                                    <td class="px-4 py-6">{{ $alum->email }}</td>
+                                    <td class="px-4 py-6 text-center">
                                         <a href="javascript:void(0)" onclick="openShowModal({{ $alum->alumni_id }})"
                                             class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
                                     </td>
-                                    <td class="px-4 py-4 text-center">
+                                    <td class="px-4 py-6 text-center">
                                         <a href="javascript:void(0)" onclick="openEditModal({{ $alum->alumni_id }})"
                                             class="text-yellow-600 hover:text-yellow-900"><i
                                                 class="fas fa-pen-to-square"></i></a>
                                     </td>
-                                    <td class="px-4 py-4 text-center">
+                                    <td class="px-4 py-6 text-center">
                                         <form action="{{ route('alumni.destroy', $alum->alumni_id) }}" method="POST"
                                             onsubmit="return confirm('Apakah Anda yakin ingin menghapus data alumni ini?')"
                                             style="display: inline;">

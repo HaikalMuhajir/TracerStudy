@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('profesi')->nullable();
             $table->string('token', 64)->unique()->nullable();
 
-
             $table->date('tanggal_lulus')->nullable();
             $table->date('tanggal_pertama_kerja')->nullable();
 

@@ -14,12 +14,9 @@ return new class extends Migration
         Schema::create('pengguna', function (Blueprint $table) {
             $table->id('pengguna_id');
 
-            $table->unsignedBigInteger('alumni_id');
-            $table->foreign('alumni_id')->references('alumni_id')->on('alumni')->onDelete('cascade');
-
             $table->string('nama');
             $table->string('jabatan');
-            $table->string('no_hp');
+            $table->string('no_hp')->unique();
             $table->string('email')->unique();
             $table->string('token', 64)->unique()->nullable();
 

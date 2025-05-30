@@ -8,7 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\AlumniImport;
+use App\Mail\TracerStudyLinkMail;
+use App\Models\Pengguna;
+use App\Models\Performa;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AlumniController extends Controller
 {
@@ -256,6 +261,126 @@ Salam hormat,
             );
         } catch (\Exception $e) {
             Log::error("Gagal kirim WA ke {$toNumber}: " . $e->getMessage());
+        }
+    }
+
+    public function showForm($token)
+    {
+        $alumni = Alumni::where('token', $token)->first();
+
+        if (!$alumni) {
+            return view('token-invalid');
+        }
+        if ($alumni->kategori_profesi) {
+            return view('alumni.preview', compact('alumni'));
+        }
+
+        return view('alumni.form', compact('alumni'));
+    }
+
+    public function submitForm(Request $request, $token)
+    {
+        $alumni = Alumni::where('token', $token)->first();
+
+        if (!$alumni) {
+            return view('token-invalid');
+        }
+        $validated = $request->validate([
+            'jenis_instansi' => 'required',
+            'nama_instansi' => 'required',
+            'skala_instansi' => 'required',
+            'lokasi_instansi' => 'required',
+            'kategori_profesi' => 'required',
+            'profesi' => 'required',
+            'tanggal_pertama_kerja' => 'required|date',
+
+            'nama_atasan' => 'required|string',
+            'jabatan_atasan' => 'required|string',
+            'email_atasan' => 'required|email',
+            'no_hp_atasan' => 'required|string',
+        ]);
+
+        $alumni->update($validated);
+
+        $tahun_kerja = Carbon::parse($alumni->tanggal_pertama_kerja)->format('Y');
+
+        $pengguna = Pengguna::where('email', $request->email_atasan)
+            ->orWhere('no_hp', $request->no_hp_atasan)
+            ->first();
+
+        if (!$pengguna) {
+            $pengguna = Pengguna::create([
+                'nama' => $request->nama_atasan,
+                'jabatan' => $request->jabatan_atasan,
+                'email' => $request->email_atasan,
+                'no_hp' => $request->no_hp_atasan,
+                'token' => Str::random(40),
+            ]);
+
+            Performa::create([
+                'pengguna_id' => $pengguna->pengguna_id,
+                'alumni_id' => $alumni->alumni_id,
+            ]);
+
+            $this->sendLink($pengguna);
+        } else {
+            $performaLama = Performa::where('pengguna_id', $pengguna->pengguna_id)
+                ->whereHas('alumni', function ($query) use ($tahun_kerja) {
+                    $query->whereYear('tanggal_pertama_kerja', $tahun_kerja);
+                })
+                ->first();
+
+            if ($performaLama) {
+                Performa::create([
+                    'pengguna_id' => $pengguna->pengguna_id,
+                    'alumni_id' => $alumni->alumni_id,
+                    'kerjasama_tim' => $performaLama->kerjasama_tim,
+                    'keahlian_ti' => $performaLama->keahlian_ti,
+                    'bahasa_asing' => $performaLama->bahasa_asing,
+                    'komunikasi' => $performaLama->komunikasi,
+                    'pengembangan_diri' => $performaLama->pengembangan_diri,
+                    'kepemimpinan' => $performaLama->kepemimpinan,
+                    'etos_kerja' => $performaLama->etos_kerja,
+                    'kompetensi_kurang' => $performaLama->kompetensi_kurang,
+                    'saran_kurikulum' => $performaLama->saran_kurikulum,
+                ]);
+            } else {
+                Performa::create([
+                    'pengguna_id' => $pengguna->pengguna_id,
+                    'alumni_id' => $alumni->alumni_id,
+                ]);
+
+                $this->sendLink($pengguna);
+            }
+        }
+
+
+        return redirect()->back()->with('success', 'Data alumni dan performa berhasil disimpan atau diproses.');
+    }
+
+    protected function sendLink($pengguna)
+    {
+        $link = url('/form-pengguna/' . $pengguna->token);
+
+        if ($pengguna->email) {
+            Mail::to($pengguna->email)->send(new \App\Mail\TracerStudyLinkMailPengguna($pengguna, $link));
+        }
+
+        $message = "*Halo {$pengguna->nama}* 👋
+
+            Kami dari *Tim Tracer Study POLINEMA* mengundang Anda untuk berpartisipasi dalam pengisian *Kuisioner Performa Lulusan POLINEMA*.
+
+            📝 Silakan isi formulir melalui link berikut:
+            {$link}
+
+            Partisipasi Anda sangat berarti untuk pengembangan institusi dan peningkatan kualitas lulusan.
+
+            Terima kasih atas waktunya 🙏
+            Salam hormat,
+            *Tim Tracer Study POLINEMA*";
+
+        if ($pengguna->no_hp) {
+            $this->sendWhatsAppMessage($pengguna->no_hp, $message);
         }
     }
 }
