@@ -23,21 +23,23 @@
     <div class="min-h-screen bg-gray-100">
         @php
             $isFormAlumni = request()->is('form-alumni/*');
+            $isFormPengguna = request()->is('form-pengguna/*');
         @endphp
 
-        {{-- Tampilkan navigation hanya jika BUKAN halaman form-alumni --}}
-        @unless($isFormAlumni)
+        {{-- Tampilkan navigation hanya jika BUKAN halaman form-alumni dan form-pengguna --}}
+        @unless($isFormAlumni || $isFormPengguna)
             @include('layouts.navigation')
         @endunless
 
         <!-- Page Heading -->
-        @if (isset($header) && !$isFormAlumni)
+        @if (isset($header) && !($isFormAlumni || $isFormPengguna))
             <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>
         @endif
+
 
         <!-- Page Content -->
         <main>
