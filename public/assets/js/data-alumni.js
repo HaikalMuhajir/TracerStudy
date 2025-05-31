@@ -1,5 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    const kategoriSelect = document.getElementById("kategori_profesi");
+    const profesiSelect = document.getElementById("profesi");
+    const profesiInput = document.getElementById("profesi_lainnya"); // pastikan elemen ini ada di Blade
+
+    const profesiOptions = {
+        "Infokom": [
+            "Developer/Programmer/Software Engineer",
+            "IT Support/IT Administrator",
+            "Infrastructure Engineer",
+            "Digital Marketing Specialist",
+            "Graphic Designer/Multimedia Designer",
+            "Business Analyst",
+            "QA Engineer/Tester",
+            "IT Enterpreneur",
+            "Trainer/Guru/Dosen (IT)",
+            "Mahasiswa",
+            "Lainnya: ....."
+        ],
+        "Non Infokom": [
+            "Procurement & Operational Team",
+            "Wirausahawan (Non IT)",
+            "Trainer/Guru/Dosen (Non IT)",
+            "Mahasiswa",
+            "Lainnya: ......"
+        ],
+        "Tidak Bekerja": [
+            "Belum Bekerja"
+        ]
+    };
+
+    function updateProfesiOptions(selectedKategori, selectedProfesi = null) {
+        const options = profesiOptions[selectedKategori] || [];
+        profesiSelect.innerHTML = '<option value="" disabled selected>Pilih profesi</option>';
+        options.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item;
+            option.textContent = item;
+            if (item === selectedProfesi) option.selected = true;
+            profesiSelect.appendChild(option);
+        });
+        // Reset profesi input jika opsi berubah
+        if (profesiInput) {
+            profesiInput.classList.add("hidden");
+            profesiInput.removeAttribute("required");
+            profesiInput.value = "";
+        }
+    }
+
+    if (kategoriSelect && profesiSelect) {
+        kategoriSelect.addEventListener("change", function () {
+            updateProfesiOptions(this.value);
+        });
+
+        profesiSelect.addEventListener("change", function () {
+            if (this.value.includes("Lainnya")) {
+                profesiInput.classList.remove("hidden");
+                profesiInput.setAttribute("required", "required");
+            } else {
+                profesiInput.classList.add("hidden");
+                profesiInput.removeAttribute("required");
+                profesiInput.value = "";
+            }
+        });
+
+        // Initial load
+        if (kategoriSelect.value) {
+            updateProfesiOptions(kategoriSelect.value, profesiSelect.value);
+        }
+    }
 
     function formatDate(dateString) {
         if (!dateString) return '-';
