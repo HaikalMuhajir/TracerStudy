@@ -25,7 +25,6 @@ class PerformaSeeder extends Seeder
             'IT Enterpreneur',
             'Trainer/Guru/Dosen (IT)',
             'Mahasiswa',
-            'Lainnya: ..... ',
             'Procurement & Operational Team',
             'Wirausahawan (Non IT)',
             'Trainer/Guru/Dosen (Non IT)',

@@ -285,24 +285,40 @@ Salam hormat,
         if (!$alumni) {
             return view('token-invalid');
         }
-        $validated = $request->validate([
-            'jenis_instansi' => 'required',
-            'nama_instansi' => 'required',
-            'skala_instansi' => 'required',
-            'lokasi_instansi' => 'required',
-            'kategori_profesi' => 'required',
-            'profesi' => 'required',
-            'tanggal_pertama_kerja' => 'required|date',
 
-            'nama_atasan' => 'required|string',
-            'jabatan_atasan' => 'required|string',
-            'email_atasan' => 'required|email',
-            'no_hp_atasan' => 'required|string',
+        $validated = $request->validate([
+            'kategori_profesi' => 'required',
+
+            'jenis_instansi' => 'required_unless:kategori_profesi,Tidak Bekerja',
+            'nama_instansi' => 'required_unless:kategori_profesi,Tidak Bekerja',
+            'skala_instansi' => 'required_unless:kategori_profesi,Tidak Bekerja',
+            'lokasi_instansi' => 'required_unless:kategori_profesi,Tidak Bekerja',
+            'profesi' => 'required_unless:kategori_profesi,Tidak Bekerja',
+            'tanggal_pertama_kerja' => 'required_unless:kategori_profesi,Tidak Bekerja|date',
+
+            'profesi_lainnya' => 'nullable|string', // tambahkan ini supaya bisa diakses
+
+            'nama_atasan' => 'nullable|string',
+            'jabatan_atasan' => 'nullable|string',
+            'email_atasan' => 'nullable|email',
+            'no_hp_atasan' => 'nullable|string',
         ]);
+
+        if ($validated['profesi'] === 'Lainnya: ......' && !empty($validated['profesi_lainnya'])) {
+            $validated['profesi'] = $validated['profesi_lainnya'];
+        }
+
+        unset($validated['profesi_lainnya']);
 
         $alumni->update($validated);
 
         $tahun_kerja = Carbon::parse($alumni->tanggal_pertama_kerja)->format('Y');
+
+        $hasAtasanData = $request->filled(['nama_atasan', 'jabatan_atasan', 'email_atasan', 'no_hp_atasan']);
+
+        if (!$hasAtasanData) {
+            return redirect()->back()->with('success', 'Data alumni berhasil disimpan tanpa data atasan.');
+        }
 
         $pengguna = Pengguna::where('email', $request->email_atasan)
             ->orWhere('no_hp', $request->no_hp_atasan)

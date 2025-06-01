@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "Lainnya: ......"
         ],
         "Tidak Bekerja": [
-            "Belum Bekerja"
         ]
     };
 

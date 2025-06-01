@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="py-4">
-        <div class="max-w-xl mx-auto sm:px-4 lg:px-6">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 w-full">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50 py-4">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 w-full max-w-xl">
                 <div class="flex justify-center mb-4">
                     <img src="{{ asset('assets/img/logo/polinema.png') }}" alt="logo-polinema" width="60">
                 </div>
@@ -14,7 +14,23 @@
                 <div class="space-y-4">
                     <form method="POST" action="{{ url('/form-alumni/' . $alumni->token) }}" class="space-y-4">
                         @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:pr-2">
+                                <label for="kategori_profesi" class="text-xs text-gray-600">Kategori Profesi</label>
+                                <select name="kategori_profesi" id="kategori_profesi" required
+                                    class="w-full border rounded p-2 text-xs">
+                                    <option value="" disabled selected>--Pilih Kategori Instansi--</option>
+                                    <option value="Infokom">Infokom</option>
+                                    <option value="Non Infokom">Non Infokom</option>
+                                    <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                </select>
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="tanggal_pertama_kerja" class="text-xs text-gray-600">Tanggal Pertama
+                                    Kerja</label>
+                                <input type="date" name="tanggal_pertama_kerja" id="tanggal_pertama_kerja"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
                             <div class="md:pr-2">
                                 <label for="nama_instansi" class="text-xs text-gray-600">Nama Instansi</label>
                                 <input type="text" name="nama_instansi" id="nama_instansi" required
@@ -46,27 +62,14 @@
                                     <option value="Lainnya">Lainnya</option>
                                 </select>
                             </div>
-                            <div class="md:pr-2">
-                                <label for="kategori_profesi" class="text-xs text-gray-600">Kategori Profesi</label>
-                                <select name="kategori_profesi" id="kategori_profesi" required
-                                    class="w-full border rounded p-2 text-xs">
-                                    <option value="" disabled selected>--Pilih Kategori Instansi--</option>
-                                    <option value="Infokom">Infokom</option>
-                                    <option value="Non Infokom">Non Infokom</option>
-                                    <option value="Tidak Bekerja">Tidak Bekerja</option>
-                                </select>
-                            </div>
-                            <div class="md:pl-2">
-                                <label for="tanggal_pertama_kerja" class="text-xs text-gray-600">Tanggal Pertama Kerja</label>
-                                <input type="date" name="tanggal_pertama_kerja" id="tanggal_pertama_kerja"
-                                    class="w-full border rounded p-2 text-xs" />
-                            </div>
                             <div class="col-span-2">
                                 <label for="profesi" class="text-xs text-gray-600">Profesi</label>
-                                <select name="profesi" id="profesi" required class="w-full border rounded p-2 text-xs">
+                                <select name="profesi" id="profesi" required
+                                    class="w-full border rounded p-2 text-xs">
                                     <option value="" disabled selected>--Pilih profesi--</option>
                                 </select>
-                                <input type="text" name="profesi_lainnya" id="profesi_lainnya" placeholder="Masukkan Profesi"
+                                <input type="text" name="profesi_lainnya" id="profesi_lainnya"
+                                    placeholder="Masukkan Profesi"
                                     class="w-full border rounded p-2 mt-2 text-xs hidden" />
                             </div>
                         </div>
@@ -75,7 +78,7 @@
                             Informasi Atasan <span class="text-gray-500 text-xs">(Opsional)</span>
                         </h3>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:pr-2">
                                 <label for="nama_atasan" class="text-xs text-gray-600">Nama Atasan</label>
                                 <input type="text" name="nama_atasan" id="nama_atasan"
@@ -97,11 +100,10 @@
                                     class="w-full border rounded p-2 text-xs" />
                             </div>
                         </div>
-                        <div class="flex justify-end mt-3">
-                            <button type="submit"
-                                    class="inline-flex items-center px-3 py-1 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <div class="flex justify-end mt-6">
+                            <x-primary-button>
                                 Submit
-                            </button>
+                            </x-primary-button>
                         </div>
                     </form>
                     @if (session('success'))
@@ -121,5 +123,65 @@
     </div>
     @push('scripts')
         <script src="{{ asset('assets/js/data-alumni.js') }}"></script>
+        <script>
+            function toggleFields(disable) {
+                const fields = [
+                    'tanggal_pertama_kerja',
+                    'nama_instansi',
+                    'lokasi_instansi',
+                    'skala_instansi',
+                    'jenis_instansi',
+                    'profesi',
+                    'profesi_lainnya',
+                    'nama_atasan',
+                    'jabatan_atasan',
+                    'email_atasan',
+                    'no_hp_atasan'
+                ];
+
+                fields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (disable) {
+                            el.disabled = true;
+                            el.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                            el.removeAttribute('required');
+                        } else {
+                            el.disabled = false;
+                            el.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                            // Tambahkan kembali required hanya untuk field yang memang wajib
+                            if (['tanggal_pertama_kerja', 'nama_instansi', 'lokasi_instansi', 'skala_instansi',
+                                    'jenis_instansi', 'profesi'
+                                ].includes(id)) {
+                                el.setAttribute('required', 'required');
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const kategori = document.getElementById('kategori_profesi');
+                kategori.addEventListener('change', function() {
+                    toggleFields(kategori.value === 'Tidak Bekerja');
+                });
+
+                // Jalankan sekali saat halaman pertama dimuat
+                toggleFields(kategori.value === 'Tidak Bekerja');
+            });
+
+            document.getElementById('profesi').addEventListener('change', function() {
+                const selected = this.value;
+                const inputLainnya = document.getElementById('profesi_lainnya');
+
+                if (selected === 'Lainnya') {
+                    inputLainnya.classList.remove('hidden');
+                    inputLainnya.setAttribute('required', 'required');
+                } else {
+                    inputLainnya.classList.add('hidden');
+                    inputLainnya.removeAttribute('required');
+                }
+            });
+        </script>
     @endpush
 </x-app-layout>
