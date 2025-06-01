@@ -1,258 +1,125 @@
-<!DOCTYPE html>
-<html lang="id">
+<x-app-layout>
+    <div class="py-4">
+        <div class="max-w-xl mx-auto sm:px-4 lg:px-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 w-full">
+                <div class="flex justify-center mb-4">
+                    <img src="{{ asset('assets/img/logo/polinema.png') }}" alt="logo-polinema" width="60">
+                </div>
+                <h2 class="text-center text-blue-900 font-bold text-lg mb-4">Formulir Tracer Study Alumni</h2>
+                <div class="flex justify-center mb-4">
+                    <label class="block text-blue-700 font-semibold text-sm text-center">
+                        Hello, <span class="font-normal">{{ $alumni->nama }}</span>
+                    </label>
+                </div>
+                <div class="space-y-4">
+                    <form method="POST" action="{{ url('/form-alumni/' . $alumni->token) }}" class="space-y-4">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:pr-2">
+                                <label for="nama_instansi" class="text-xs text-gray-600">Nama Instansi</label>
+                                <input type="text" name="nama_instansi" id="nama_instansi" required
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="lokasi_instansi" class="text-xs text-gray-600">Lokasi Instansi</label>
+                                <input type="text" name="lokasi_instansi" id="lokasi_instansi" required
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="md:pr-2">
+                                <label for="skala_instansi" class="text-xs text-gray-600">Skala Instansi</label>
+                                <select name="skala_instansi" id="skala_instansi" required
+                                    class="w-full border rounded p-2 text-xs">
+                                    <option value="" disabled selected>--Pilih Skala Instansi--</option>
+                                    <option value="Internasional">Internasional</option>
+                                    <option value="Nasional">Nasional</option>
+                                    <option value="Wirausaha">Wirausaha</option>
+                                </select>
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="jenis_instansi" class="text-xs text-gray-600">Jenis Instansi</label>
+                                <select name="jenis_instansi" id="jenis_instansi" required
+                                    class="w-full border rounded p-2 text-xs">
+                                    <option value="" disabled selected>--Pilih Jenis Instansi--</option>
+                                    <option value="Pendidikan">Pendidikan</option>
+                                    <option value="Pemerintahan">Pemerintahan</option>
+                                    <option value="Swasta">Swasta</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="md:pr-2">
+                                <label for="kategori_profesi" class="text-xs text-gray-600">Kategori Profesi</label>
+                                <select name="kategori_profesi" id="kategori_profesi" required
+                                    class="w-full border rounded p-2 text-xs">
+                                    <option value="" disabled selected>--Pilih Kategori Instansi--</option>
+                                    <option value="Infokom">Infokom</option>
+                                    <option value="Non Infokom">Non Infokom</option>
+                                    <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                </select>
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="tanggal_pertama_kerja" class="text-xs text-gray-600">Tanggal Pertama Kerja</label>
+                                <input type="date" name="tanggal_pertama_kerja" id="tanggal_pertama_kerja"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="col-span-2">
+                                <label for="profesi" class="text-xs text-gray-600">Profesi</label>
+                                <select name="profesi" id="profesi" required class="w-full border rounded p-2 text-xs">
+                                    <option value="" disabled selected>--Pilih profesi--</option>
+                                </select>
+                                <input type="text" name="profesi_lainnya" id="profesi_lainnya" placeholder="Masukkan Profesi"
+                                    class="w-full border rounded p-2 mt-2 text-xs hidden" />
+                            </div>
+                        </div>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Formulir Tracer Study</title>
-    <link rel="shortcut icon" href="{{ asset('assets/img/logo/polinema.png') }}" type="image/x-icon" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+                        <h3 class="text-blue-600 font-bold text-sm mt-4">
+                            Informasi Atasan <span class="text-gray-500 text-xs">(Opsional)</span>
+                        </h3>
 
-        body {
-            font-family: "Inter", Arial, sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
-        }
-
-        .formbold-main-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 16px;
-            min-height: 100vh;
-        }
-
-        input[type="date"].formbold-form-input {
-            appearance: auto;
-            -webkit-appearance: textfield;
-            -moz-appearance: textfield;
-            background-color: #fff;
-            cursor: pointer;
-            font-family: Arial, sans-serif;
-            /* fallback font */
-        }
-
-        .formbold-form-wrapper {
-            background: white;
-            max-width: 1200px;
-            width: 100%;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .formbold-form-label {
-            display: block;
-            font-weight: 500;
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-
-        .formbold-form-label-2 {
-            font-weight: 700;
-            font-size: 22px;
-            margin-bottom: 24px;
-            color: #1e3a8a;
-        }
-
-        .formbold-form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 6px;
-            border: 1px solid #d1d5db;
-            font-size: 16px;
-            margin-bottom: 24px;
-        }
-
-        .formbold-form-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0px 0px 5px rgba(99, 102, 241, 0.3);
-            outline: none;
-        }
-
-        .formbold-btn {
-            font-size: 16px;
-            border-radius: 6px;
-            padding: 14px 32px;
-            border: none;
-            font-weight: 600;
-            background-color: #6366f1;
-            color: white;
-            width: 100%;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .formbold-btn:hover {
-            background-color: #4f46e5;
-        }
-
-        .form-row {
-            display: flex;
-            flex-direction: column;
-            width: 48%;
-            margin-bottom: 24px;
-        }
-
-        .form-row:nth-child(odd) {
-            margin-right: 4%;
-        }
-
-        .form-section {
-            margin-bottom: 32px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 24px;
-        }
-
-        .form-section:last-of-type {
-            border-bottom: none;
-        }
-
-        @media (min-width: 769px) {
-            .form-section {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                width: 100%;
-                margin-right: 0;
-            }
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mb-8 {
-            margin-bottom: 32px;
-        }
-
-        .mb-2 {
-            margin-bottom: 8px;
-        }
-
-        .mt-2 {
-            margin-top: 8px;
-        }
-
-        .text-blue-900 {
-            color: #1e3a8a;
-        }
-
-        .text-gray-700 {
-            color: #374151;
-        }
-
-        .text-green-800 {
-            color: #166534;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="formbold-main-wrapper">
-        <div class="formbold-form-wrapper">
-            <div class="text-center mb-8">
-                <img src="{{ asset('assets/img/logo/polinema.png') }}" alt="Logo" class=" mx-auto mb-2"
-                    style="height: 8rem" />
-                <h1 class="text-7xl font-semibold text-blue-900">Formulir Tracer Study Alumni</h1>
-                <p class="mt-2 text-lg font-medium text-gray-700">Halo, {{ $alumni->nama }}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:pr-2">
+                                <label for="nama_atasan" class="text-xs text-gray-600">Nama Atasan</label>
+                                <input type="text" name="nama_atasan" id="nama_atasan"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="jabatan_atasan" class="text-xs text-gray-600">Jabatan Atasan</label>
+                                <input type="text" name="jabatan_atasan" id="jabatan_atasan"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="md:pr-2">
+                                <label for="email_atasan" class="text-xs text-gray-600">Email Atasan</label>
+                                <input type="email" name="email_atasan" id="email_atasan"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                            <div class="md:pl-2">
+                                <label for="no_hp_atasan" class="text-xs text-gray-600">No HP Atasan</label>
+                                <input type="text" name="no_hp_atasan" id="no_hp_atasan"
+                                    class="w-full border rounded p-2 text-xs" />
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-3">
+                            <button type="submit"
+                                    class="inline-flex items-center px-3 py-1 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                    @if (session('success'))
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sukses!',
+                                text: '{{ session('success') }}',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>
+                    @endif
+                </div>
             </div>
-
-            <form method="POST" action="{{ url('/form-alumni/' . $alumni->token) }}">
-                @csrf
-
-                <div class="form-section" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
-                    <div style="flex: 1 1 150px; min-width: 150px;">
-                        <label class="formbold-form-label" for="nama_instansi">Nama Instansi</label>
-                        <input type="text" id="nama_instansi" name="nama_instansi" required
-                            class="formbold-form-input" />
-                    </div>
-                    <div style="flex: 1 1 150px; min-width: 150px;">
-                        <label class="formbold-form-label" for="lokasi_instansi">Lokasi Instansi</label>
-                        <input type="text" id="lokasi_instansi" name="lokasi_instansi" required
-                            class="formbold-form-input" />
-                    </div>
-
-                    <!-- Baris 4 input dalam satu baris -->
-                    <div style="display: flex; flex-wrap: nowrap; gap: 16px; width: 100%;">
-                        <div style="flex: 1 1 0; min-width: 150px;">
-                            <label class="formbold-form-label" for="skala_instansi">Skala Instansi</label>
-                            <input type="text" id="skala_instansi" name="skala_instansi" required
-                                class="formbold-form-input" />
-                        </div>
-                        <div style="flex: 1 1 0; min-width: 150px;">
-                            <label class="formbold-form-label" for="jenis_instansi">Jenis Instansi</label>
-                             <input type="text" id="jenis_instansi" name="jenis_instansi" required
-                                class="formbold-form-input" />
-                        </div>
-                        <div style="flex: 1 1 0; min-width: 150px;">
-                            <label class="formbold-form-label" for="kategori_profesi">Kategori Profesi</label>
-                            <input type="text" id="kategori_profesi" name="kategori_profesi" required
-                                class="formbold-form-input" />
-                        </div>
-                        <div style="flex: 1 1 0; min-width: 150px;">
-                            <label class="formbold-form-label" for="tanggal_pertama_kerja">Tanggal Pertama Kerja</label>
-                            <input type="date" id="tanggal_pertama_kerja" name="tanggal_pertama_kerja"
-                                class="formbold-form-input" />
-                        </div>
-                    </div>
-
-                    <div style="flex: 1 1 150px; min-width: 150px;">
-                        <label class="formbold-form-label" for="profesi">Profesi</label>
-                        <input type="text" id="profesi" name="profesi" required class="formbold-form-input" />
-                    </div>
-                </div>
-
-
-
-                <div class="form-section">
-                    <h2 class="formbold-form-label-2 ">Informasi Atasan <span
-                            class="text-sm text-gray-500">(Opsional)</span></h2>
-                    <div class="form-row">
-                    </div>
-                    <div class="form-row">
-                        <label class="formbold-form-label">Nama Atasan</label>
-                        <input type="text" name="nama_atasan" class="formbold-form-input" />
-                    </div>
-
-                    <div class="form-row">
-                        <label class="formbold-form-label">Jabatan Atasan</label>
-                        <input type="text" name="jabatan_atasan" class="formbold-form-input" />
-                    </div>
-
-                    <div class="form-row">
-                        <label class="formbold-form-label">Email Atasan</label>
-                        <input type="email" name="email_atasan" class="formbold-form-input" />
-                    </div>
-
-                    <div class="form-row">
-                        <label class="formbold-form-label">No HP Atasan</label>
-                        <input type="text" name="no_hp_atasan" class="formbold-form-input" />
-                    </div>
-                </div>
-
-                <div style="clear: both;">
-                    <button type="submit" class="formbold-btn">Kirim</button>
-                </div>
-            </form>
         </div>
     </div>
-</body>
-
-</html>
+    @push('scripts')
+        <script src="{{ asset('assets/js/data-alumni.js') }}"></script>
+    @endpush
+</x-app-layout>

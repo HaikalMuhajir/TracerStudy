@@ -21,10 +21,18 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        @include('layouts.navigation')
+        @php
+            $isFormAlumni = request()->is('form-alumni/*');
+            $isFormPengguna = request()->is('form-pengguna/*');
+        @endphp
+
+        {{-- Tampilkan navigation hanya jika BUKAN halaman form-alumni dan form-pengguna --}}
+        @unless($isFormAlumni || $isFormPengguna)
+            @include('layouts.navigation')
+        @endunless
 
         <!-- Page Heading -->
-        @if (isset($header))
+        @if (isset($header) && !($isFormAlumni || $isFormPengguna))
             <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
@@ -32,12 +40,15 @@
             </header>
         @endif
 
+
         <!-- Page Content -->
         <main>
             {{ $slot }}
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @stack('scripts')
 </body>
+
 
 </html>
