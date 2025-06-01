@@ -32,28 +32,28 @@ class AlumniImport implements ToCollection, WithHeadingRow
                 'token' => Str::random(32),
             ]);
 
-            //             $link = url('/form-alumni/' . $alumni->token);
+                        $link = url('/form-alumni/' . $alumni->token);
 
-            //             if ($alumni->email) {
-            //                 Mail::to($alumni->email)->send(new TracerStudyLinkMail($alumni, $link));
-            //             }
+                        if ($alumni->email) {
+                            Mail::to($alumni->email)->send(new TracerStudyLinkMail($alumni, $link));
+                        }
 
-            //             $message = "*Halo {$alumni->nama}* 👋
+                        $message = "*Halo {$alumni->nama}* 👋
 
-            // Kami dari *Tim Tracer Study POLINEMA* mengundang Anda untuk berpartisipasi dalam pengisian *Tracer Study Alumni*.
+            Kami dari *Tim Tracer Study POLINEMA* mengundang Anda untuk berpartisipasi dalam pengisian *Tracer Study Alumni*.
 
-            // 📝 Silakan isi formulir melalui link berikut:
-            // {$link}
+            📝 Silakan isi formulir melalui link berikut:
+            {$link}
 
-            // Partisipasi Anda sangat berarti untuk pengembangan institusi dan peningkatan kualitas lulusan.
+            Partisipasi Anda sangat berarti untuk pengembangan institusi dan peningkatan kualitas lulusan.
 
-            // Terima kasih atas waktunya 🙏
-            // Salam hormat,
-            // *Tim Tracer Study POLINEMA*";
+            Terima kasih atas waktunya 🙏
+            Salam hormat,
+            *Tim Tracer Study POLINEMA*";
 
-            //             if ($alumni->no_hp) {
-            //                 $this->sendWhatsAppMessage($alumni->no_hp, $message);
-            //             }
+                        if ($alumni->no_hp) {
+                            $this->sendWhatsAppMessage($alumni->no_hp, $message);
+                        }
         }
     }
 
