@@ -22,7 +22,7 @@ class AlumniController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
         $prodi = session('filter.prodi');
         $tahunAwal = session('filter.tahun_awal');
@@ -42,9 +42,19 @@ class AlumniController extends Controller
             $query->whereYear('tanggal_lulus', '<=', $tahunAkhir);
         }
 
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('nim', 'like', '%' . $search . '%');
+            });
+        }
         $alumni = $query->paginate(10);
         $programStudi = ProgramStudi::all();
 
+        if ($request->ajax()) {
+            return view('alumni._table', compact('alumni'))->render();
+        }
         return view('alumni.index', compact('alumni', 'programStudi', 'prodi', 'tahunAwal', 'tahunAkhir'));
     }
 
@@ -304,7 +314,21 @@ Salam hormat,
             'no_hp_atasan' => 'nullable|string',
         ]);
 
-        if ($validated['profesi'] === 'Lainnya: ......' && !empty($validated['profesi_lainnya'])) {
+        if ($validated['kategori_profesi'] === 'Tidak Bekerja') {
+            $validated['jenis_instansi'] = null;
+            $validated['nama_instansi'] = null;
+            $validated['skala_instansi'] = null;
+            $validated['lokasi_instansi'] = null;
+            $validated['profesi'] = null;
+            $validated['profesi_lainnya'] = null;
+            $validated['tanggal_pertama_kerja'] = null;
+            $validated['nama_atasan'] = null;
+            $validated['jabatan_atasan'] = null;
+            $validated['email_atasan'] = null;
+            $validated['no_hp_atasan'] = null;
+        }
+
+        if ($validated['profesi'] === 'Lainnya' && !empty($validated['profesi_lainnya'])) {
             $validated['profesi'] = $validated['profesi_lainnya'];
         }
 

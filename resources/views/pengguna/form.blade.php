@@ -14,7 +14,7 @@
 
                 {{-- Form untuk memilih tahun --}}
                 <form method="GET" action="{{ url('/form-pengguna/' . $pengguna->token) }}" class="mb-4">
-                    <label for="tahun_kerja" class="text-blue-600 font-bold text-sm">Tahun Kerja</label>
+                    <label for="tahun_kerja" class="text-blue-600 font-bold text-sm">Tahun Mulai Masuk Kerja</label>
                     <select id="tahun_kerja" name="tahun" required onchange="this.form.submit()"
                         class="w-full border rounded p-2 text-xs">
                         <option value="" disabled {{ $selectedYear ? '' : 'selected' }}>-- Pilih Tahun --</option>
@@ -72,9 +72,9 @@
                                                         <label class="inline-flex items-center">
                                                             <input type="radio" name="{{ $field }}"
                                                                 value="{{ $value }}"
-                                                                class="form-radio h-4 w-4 text-blue-600 {{ $performaIsi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
+                                                                class="form-radio h-4 w-4 text-blue-600 {{ $performaTerisi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
                                                                 {{ old($field, optional($performaIsi)->$field) == $value ? 'checked' : '' }}
-                                                                {{ $performaIsi ? 'disabled' : '' }} required>
+                                                                {{ $performaTerisi ? 'disabled' : '' }} required>
                                                         </label>
                                                     </td>
                                                 @endforeach
@@ -96,20 +96,20 @@
                                         Kompetensi Kurang <span class="text-gray-400 text-xs">(Opsional)</span>
                                     </label>
                                     <textarea id="kompetensi_kurang" name="kompetensi_kurang" rows="3"
-                                        class="w-full border rounded p-2 text-xs {{ $performaIsi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
-                                        {{ $performaIsi ? 'readonly' : '' }}>{{ old('kompetensi_kurang', optional($performaIsi)->kompetensi_kurang) }}</textarea>
+                                        class="w-full border rounded p-2 text-xs {{ $performaTerisi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
+                                        {{ $performaTerisi ? 'readonly' : '' }}>{{ old('kompetensi_kurang', optional($performaIsi)->kompetensi_kurang) }}</textarea>
                                 </div>
                                 <div>
                                     <label for="saran_kurikulum" class="block text-sm text-blue-600 font-bold">
                                         Saran Kurikulum <span class="text-gray-400 text-xs">(Opsional)</span>
                                     </label>
                                     <textarea id="saran_kurikulum" name="saran_kurikulum" rows="3"
-                                        class="w-full border rounded p-2 text-xs {{ $performaIsi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
-                                        {{ $performaIsi ? 'readonly' : '' }}>{{ old('saran_kurikulum', optional($performaIsi)->saran_kurikulum) }}</textarea>
+                                        class="w-full border rounded p-2 text-xs {{ $performaTerisi ? 'bg-gray-100 cursor-not-allowed' : '' }}"
+                                        {{ $performaTerisi ? 'readonly' : '' }}>{{ old('saran_kurikulum', optional($performaIsi)->saran_kurikulum) }}</textarea>
                                 </div>
                             </div>
 
-                            @if (!$performaIsi)
+                            @if (!$performaTerisi)
                                 <div class="flex justify-end mt-6">
                                     <x-primary-button>
                                         Submit

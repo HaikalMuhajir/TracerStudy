@@ -32,16 +32,29 @@ class PenggunaController extends Controller
         $selectedYear = request()->query('tahun');
 
         $performaIsi = null;
+        $performaTerisi = false;
+
         if ($selectedYear) {
             $performaIsi = Performa::where('pengguna_id', $pengguna->pengguna_id)
                 ->whereHas('alumni', fn($q) => $q->whereYear('tanggal_pertama_kerja', $selectedYear))
                 ->first();
+
+            // Cek apakah ada nilai di salah satu aspek performa
+            if ($performaIsi) {
+                $performaTerisi = collect([
+                    $performaIsi->kerjasama_tim,
+                    $performaIsi->keahlian_ti,
+                    $performaIsi->bahasa_asing,
+                    $performaIsi->komunikasi,
+                    $performaIsi->pengembangan_diri,
+                    $performaIsi->kepemimpinan,
+                    $performaIsi->etos_kerja,
+                ])->filter(fn($value) => !is_null($value))->isNotEmpty();
+            }
         }
 
-        return view('pengguna.form', compact('pengguna', 'tahunKerjaList', 'selectedYear', 'performaIsi'));
+        return view('pengguna.form', compact('pengguna', 'tahunKerjaList', 'selectedYear', 'performaIsi', 'performaTerisi'));
     }
-
-
 
     public function submitForm(Request $request, $token)
     {
